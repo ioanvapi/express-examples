@@ -1,3 +1,8 @@
+/*
+* Nice tutorial:
+* https://scotch.io/tutorials/learn-to-use-the-new-router-in-expressjs-4
+*/
+
 import express from 'express';
 import path from 'path';
 
