@@ -1,3 +1,8 @@
+/*
+* Nice tutorial at:
+* https://scotch.io/tutorials/learn-to-use-the-new-router-in-expressjs-4
+*/
+
 import express from 'express';
 import path from 'path';
 import bodyParser from 'body-parser';
@@ -8,15 +13,34 @@ let app = express();
 app.use(bodyParser.json());
 
 // respond with a simple text
+app.get('/', (req, res) => {
+  res.send("this is home page");
+});
+
+
+// respond with a simple text
 app.get('/hello', (req, res) => {
   res.send("Hello world");
 });
 
 // respond sending an html file
-app.get('/salut', (req, res)  => {
+app.get('/salut', (req, res) => {
   res.sendFile(path.join(__dirname, 'salut.html'));
 });
 
+//==============================================================
+//this is to handle both GET and POST methods of a request
+//ex. GEt is to get the login page and POST is to post the credentials
+app.route('/login')
+  .get((req, res) => {
+    res.send("here is the login form");
+  })
+  .post((req, res) => {
+    res.send("here there are the login credentials - aka form processing");
+  });
+
+
+//==============================================================
 // define a router
 let router = express.Router();
 app.use('/api', router);
@@ -58,3 +82,22 @@ router.post('/users/add', (req, res) => {
 
   res.json({success: true})
 });
+
+
+//==============================================================
+//define and use a middleware router
+let mr = express.Router();
+mr.use((req, res, next) => {
+  console.log("in middleware:", req.method, req.url);
+  //put something in request body and get it below, in get
+  req.body = {ceva: "cucu"};
+  next();
+});
+
+mr.get('/', (req, res) => {
+  // get the info from body, changed in middleware
+  console.log("getting the home page and request body:", req.body);
+  res.send("here is the home page")
+});
+
+app.use('/mw', mr);
